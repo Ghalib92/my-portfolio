@@ -211,6 +211,45 @@
             z-index: 1;
             animation: pulse 4s infinite alternate;
         }
+
+        /* Compact nav logo — anchored animated cube (separate from hero floating cubes) */
+        .logo-cube {
+            width: 80px;
+            height: 50px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, rgba(212,175,55,0.08), rgba(255,255,255,0.02));
+            border: 1px solid rgba(212,175,55,0.18);
+            color: var(--accent-gold);
+            font-size: 25px;
+            box-shadow: 0 6px 18px rgba(212,175,55,0.06);
+            position: relative;
+            z-index: 2;
+            transition: transform 400ms ease, box-shadow 300ms ease;
+            cursor: default;
+        }
+
+        .logo-cube:hover {
+            transform: translateY(-3px) rotate(-6deg) scale(1.02);
+            box-shadow: 0 10px 26px rgba(212,175,55,0.12);
+        }
+
+        .logo-cube i {
+            display: inline-block;
+            transform-origin: center;
+        }
+
+        @keyframes logo-rotate {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(12deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .logo-cube { animation: none !important; transition: none !important; }
+        }
         
         .nav-links {
             display: flex;
@@ -277,13 +316,13 @@
             padding: 100px 5% 50px;
             position: relative;
             overflow: hidden;
-            margin-top: 30px;
+            margin-top: 70px;
         }
         
         .floating-bg {
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 30px;
+            left: 70%;
             width: 100%;
             height: 100%;
             z-index: -1;
@@ -294,19 +333,61 @@
             position: absolute;
             width: clamp(40px, 6vw, 60px);
             height: clamp(40px, 6vw, 60px);
-            background: rgba(212, 175, 55, 0.1);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            background: linear-gradient(180deg, rgba(212,175,55,0.08), rgba(255,255,255,0.02));
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(212, 175, 55, 0.18);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: clamp(1.2rem, 3vw, 1.8rem);
             color: var(--accent-gold);
-            animation: float 20s infinite linear;
-            animation-delay: var(--delay);
-            transform: translate(var(--x), var(--y));
-            transition: var(--transition-fast);
+            /* use CSS variables for position and animate transform smoothly */
+            transform: translate(var(--x, 0%), var(--y, 0%)) scale(1);
+            transition: transform 5s cubic-bezier(.22,1,.36,1), box-shadow 0.4s ease;
+            box-shadow: 0 6px 18px rgba(212,175,55,0.06);
+            will-change: transform;
+        }
+
+        /* subtle glow behind each cube for a premium look */
+        .floating-cube::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 160%;
+            height: 160%;
+            background: radial-gradient(circle, rgba(212,175,55,0.14), transparent 40%);
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(18px);
+            opacity: 0.0;
+            transition: opacity 400ms ease, transform 400ms ease;
+            pointer-events: none;
+        }
+
+        .floating-cube:hover::after {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        /* Respect reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            .floating-cube {
+                transition: none !important;
+            }
+
+            .floating-cube::after {
+                transition: none !important;
+            }
+        }
+        /* subtle icon styling inside cubes */
+        .floating-cube i {
+            pointer-events: none;
+            display: inline-block;
+            transform: translateZ(0);
+            opacity: 0.95;
         }
         
         .hero-content {
@@ -1088,11 +1169,13 @@
 </head>
 <body>
     <!-- Navigation -->
+     
     <nav class="nav-glass">
         <div class="nav-container">
             <div class="nav-logo">
-                <span class="logo-text">MG</span>
-                <span class="logo-glow"></span>
+                <!-- Replaced text logo with animated logo-cube (anchored) -->
+                <div class="logo-cube" data-icons="fas fa-code" role="img" aria-label="Mohammed Ghalib logo">
+                </div>
             </div>
             <ul class="nav-links">
                 <li><a href="#hero" class="nav-link">Home</a></li>
@@ -1113,21 +1196,23 @@
     <!-- Hero Section -->
     <section id="hero" class="hero-section">
         <div class="floating-bg">
-            <div class="floating-cube" style="--delay:0s; --x:10%; --y:20%;"><i class="fab fa-python"></i></div>
-            <div class="floating-cube" style="--delay:1s; --x:80%; --y:60%;"><i class="fab fa-react"></i></div>
-            <div class="floating-cube" style="--delay:2s; --x:20%; --y:70%;"><i class="fab fa-js"></i></div>
-            <div class="floating-cube" style="--delay:3s; --x:70%; --y:30%;"><i class="fas fa-database"></i></div>
-            <div class="floating-cube" style="--delay:4s; --x:40%; --y:10%;"><i class="fab fa-aws"></i></div>
-            <div class="floating-cube" style="--delay:5s; --x:90%; --y:80%;"><i class="fas fa-robot"></i></div>
-            <div class="floating-cube" style="--delay:6s; --x:60%; --y:50%;"><i class="fas fa-code"></i></div>
-            <div class="floating-cube" style="--delay:7s; --x:30%; --y:40%;"><i class="fab fa-docker"></i></div>
+            <!-- Each cube now has a shared data-icons list and will cycle through them while moving -->
+            <div class="floating-cube" data-icons="fab fa-python|fab fa-react|fab fa-js|fas fa-database|fab fa-aws|fas fa-robot|fas fa-code|fab fa-docker" style="--x:10%; --y:20%;"></div>
+            <div class="floating-cube" data-icons="fab fa-python|fab fa-react|fab fa-js|fas fa-database|fab fa-aws|fas fa-robot|fas fa-code|fab fa-docker" style="--x:80%; --y:60%;"></div>
+            <div class="floating-cube" data-icons="fab fa-python|fab fa-react|fab fa-js|fas fa-database|fab fa-aws|fas fa-robot|fas fa-code|fab fa-docker" style="--x:20%; --y:70%;"></div>
+            <div class="floating-cube" data-icons="fab fa-python|fab fa-react|fab fa-js|fas fa-database|fab fa-aws|fas fa-robot|fas fa-code|fab fa-docker" style="--x:70%; --y:30%;"></div>
+            <div class="floating-cube" data-icons="fab fa-python|fab fa-react|fab fa-js|fas fa-database|fab fa-aws|fas fa-robot|fas fa-code|fab fa-docker" style="--x:40%; --y:10%;"></div>
+            <div class="floating-cube" data-icons="fab fa-python|fab fa-react|fab fa-js|fas fa-database|fab fa-aws|fas fa-robot|fas fa-code|fab fa-docker" style="--x:90%; --y:80%;"></div>
+            <div class="floating-cube" data-icons="fab fa-python|fab fa-react|fab fa-js|fas fa-database|fab fa-aws|fas fa-robot|fas fa-code|fab fa-docker" style="--x:60%; --y:50%;"></div>
+            <div class="floating-cube" data-icons="fab fa-python|fab fa-react|fab fa-js|fas fa-database|fab fa-aws|fas fa-robot|fas fa-code|fab fa-docker" style="--x:30%; --y:40%;"></div>
         </div>
-        
+
         <div class="hero-content">
             <div class="hero-intro">
                 <h6 class="hero-subtitle">Full-Stack Developer</h6>
                 <h1 class="hero-title">Mohammed <span class="gold-text">Ghalib</span></h1>
-                <p class="hero-summary">Building scalable web applications with 2+ years of enterprise experience at <span class="highlight">KCB Bank</span> and <span class="highlight">Bee MultiScent Ltd</span>. Expertise in Python/Django, React.js, and Generative AI.</p>
+                <p class="hero-summary">A results-driven Full-Stack Engineer focused on designing and delivering scalable, secure, and high-performance digital systems. Experienced in building production-grade applications, optimizing workflows, and translating complex business requirements into clean, maintainable software.
+</p>
                 <div class="hero-actions">
                     <a href="#projects" class="btn btn-gold">View My Work</a>
                     <a href="#contact" class="btn btn-outline">Contact Me</a>
@@ -1164,51 +1249,95 @@
         </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="section about-section">
-        <div class="section-header">
-            <h2 class="section-title">Professional <span class="gold-text">Profile</span></h2>
-            <p class="section-subtitle">Full-Stack Developer with enterprise experience in banking and software development</p>
+  <!-- About Section -->
+<section id="about" class="section about-section">
+    <div class="section-header">
+        <h2 class="section-title">
+            Professional <span class="gold-text">Profile</span>
+        </h2>
+        <p class="section-subtitle">
+            I build systems that are meant to last — thoughtfully designed, carefully engineered, and ready for real-world scale
+        </p>
+    </div>
+
+    <div class="about-content">
+        <!-- Text Card -->
+        <div class="about-text glass-card">
+            <p class="about-paragraph">
+                I’m a developer who enjoys working at the intersection of <span class="highlight">logic, structure, and experience</span>.
+                What drives my work is not just making things function, but making them reliable, clear, and easy to evolve over time.
+            </p>
+
+            <p class="about-paragraph">
+                My approach to software is grounded in understanding the problem first — how people use a system, where failures can happen,
+                and how architecture choices today affect maintainability tomorrow. I care deeply about <span class="highlight">clean code,
+                predictable behavior, and scalable design</span>.
+            </p>
+
+            <p class="about-paragraph">
+                I’m comfortable working across the stack, but I naturally gravitate toward building strong foundations —
+                APIs, data flows, integrations, and the logic that quietly keeps products running. At the same time, I value interfaces
+                that feel intentional, responsive, and refined.
+            </p>
+
+            <!-- More Interesting Area (Creative, Not CV) -->
+            <div class="about-focus">
+                <div class="focus-item">
+                    <h4 class="focus-title">How I Think</h4>
+                    <p class="focus-text">
+                        I break complex problems into smaller, understandable pieces. I design with failure in mind,
+                        optimize for clarity over cleverness, and prefer solutions that teams can confidently build on.
+                    </p>
+                </div>
+
+                <div class="focus-item">
+                    <h4 class="focus-title">How I Work</h4>
+                    <p class="focus-text">
+                        I value communication, documentation, and ownership. Whether working independently or within a team,
+                        I aim to be dependable, intentional, and focused on delivering meaningful results.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Stats (Kept visual, not over-explained) -->
+            <div class="about-stats">
+                <div class="stat-item">
+                    <div class="stat-number">2+</div>
+                    <div class="stat-label">Years Building</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Systems Shipped</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">1000+</div>
+                    <div class="stat-label">Users Reached</div>
+                </div>
+            </div>
         </div>
-        
-        <div class="about-content">
-            <div class="about-text glass-card">
-                <p class="about-paragraph">
-                    Full-Stack Developer with <span class="highlight">2+ years</span> of hands-on enterprise and production experience delivering scalable web applications. Proven success supporting digital systems at <span class="highlight">KCB Bank (Kenya's largest bank)</span> and developing full-stack platforms at <span class="highlight">Bee MultiScent Ltd</span>.
-                </p>
-                <p class="about-paragraph">
-                    Strong expertise in <span class="highlight">Python/Django</span>, <span class="highlight">React.js</span>, <span class="highlight">REST APIs</span>, <span class="highlight">Oracle Fusion</span>, and <span class="highlight">Generative AI</span> (OpenAI, LangChain, Pinecone). Reliable in corporate environments—punctual, well-presented, and skilled in communication, documentation, and stakeholder coordination.
-                </p>
-                
-                <div class="about-stats">
-                    <div class="stat-item">
-                        <div class="stat-number">2+</div>
-                        <div class="stat-label">Years Experience</div>
+
+        <!-- Image / Identity Area -->
+        <div class="about-image">
+            <div class="image-container">
+                <div class="image-frame">
+                    <div class="image-glow"></div>
+
+                    <div class="placeholder-image">
+                        <div class="placeholder-text">MG</div>
+                        <div class="placeholder-glow"></div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number">10+</div>
-                        <div class="stat-label">Projects Completed</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">1000+</div>
-                        <div class="stat-label">Users Supported</div>
+
+                    <!-- Creative Identity Caption -->
+                    <div class="image-caption">
+                        <span class="caption-title">Full-Stack Engineer</span>
+                        <span class="caption-subtitle">Backend-first • System-minded • Detail-oriented</span>
                     </div>
                 </div>
             </div>
-            
-            <div class="about-image">
-                <div class="image-container">
-                    <div class="image-frame">
-                        <div class="image-glow"></div>
-                        <div class="placeholder-image">
-                            <div class="placeholder-text">MG</div>
-                            <div class="placeholder-glow"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-    </section>
+    </div>
+</section>
+
 
     <!-- Experience Section -->
     <section id="experience" class="section experience-section">
@@ -1445,8 +1574,7 @@
             <div class="contact-info glass-card">
                 <h3 class="contact-title">Contact Information</h3>
                 <p class="contact-description">
-                    I'm currently open to new opportunities in full-stack development, particularly those involving AI integration, enterprise systems, or innovative web applications.
-                </p>
+                    Driving innovation in web and AI applications with end-to-end full-stack development.       </p>
                 
                 <div class="contact-details">
                     <div class="contact-detail-item">
@@ -1682,19 +1810,207 @@
             observer.observe(el);
         });
 
-        // Floating cubes animation
-        document.querySelectorAll('.floating-cube').forEach(cube => {
-            // Random movement on hover
-            cube.addEventListener('mouseenter', function() {
-                if (window.innerWidth > 768) { // Only on desktop
-                    this.style.transform = `translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px) scale(1.2)`;
+        // Floating cubes — refined continuous motion + smooth crossfade icon swapping
+        (function() {
+            const defaultIcons = ['fab fa-python','fab fa-react','fab fa-js','fas fa-database','fab fa-aws','fas fa-robot','fas fa-code','fab fa-docker'];
+            const cubes = Array.from(document.querySelectorAll('.floating-cube'));
+            if (!cubes.length) return;
+
+            const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            // utility to parse css custom property that might be a percentage
+            const parsePercent = (val, fallback) => {
+                if (!val) return fallback;
+                const m = val.trim().match(/^(-?\d+(?:\.\d+)?)%?/);
+                return m ? parseFloat(m[1]) : fallback;
+            };
+
+            cubes.forEach((cube, idx) => {
+                const icons = (cube.dataset.icons ? cube.dataset.icons.split('|') : defaultIcons).filter(Boolean);
+
+                // initialize icon
+                let iconIndex = Math.floor(Math.random() * icons.length);
+                const setInitialIcon = () => {
+                    cube.innerHTML = '';
+                    const i = document.createElement('i');
+                    i.className = icons[iconIndex];
+                    i.style.position = 'relative';
+                    i.style.transition = 'opacity 420ms ease';
+                    i.style.opacity = '1';
+                    cube.appendChild(i);
+                };
+        setInitialIcon();
+
+        
+                // depth / size variation
+                const size = 36 + Math.round(Math.random() * 36); // 36-72px
+                cube.style.width = size + 'px';
+                cube.style.height = size + 'px';
+                cube.style.fontSize = Math.round(size * 0.5) + 'px';
+                cube.style.zIndex = 10 + Math.floor(Math.random() * 50);
+
+                // read base positions from CSS vars (set inline) or pick random
+                const cs = getComputedStyle(cube);
+                const baseX = parsePercent(cs.getPropertyValue('--x'), 10 + Math.random() * 80);
+                const baseY = parsePercent(cs.getPropertyValue('--y'), 10 + Math.random() * 80);
+
+                // movement parameters
+                const ampX = 3 + Math.random() * 10; // percent amplitude
+                const ampY = 3 + Math.random() * 8;
+                const freq = 0.0005 + Math.random() * 0.0012; // cycles per ms
+                const phase = Math.random() * Math.PI * 2;
+                const rotSpeed = (Math.random() * 30 - 15) / 1000; // deg per ms
+
+                // movement via requestAnimationFrame for smooth, continuous motion
+                let rafId = null;
+                if (!prefersReduced) {
+                    const step = (t) => {
+                        const x = baseX + Math.sin(t * freq + phase) * ampX;
+                        const y = baseY + Math.cos(t * freq + phase) * ampY;
+                        const scale = 1 + Math.sin(t * freq * 1.1 + phase) * 0.04;
+                        const rotate = (t * rotSpeed) % 360;
+                        cube.style.transform = `translate(${x}%, ${y}%) scale(${scale}) rotate(${rotate}deg)`;
+                        rafId = requestAnimationFrame(step);
+                    };
+                    rafId = requestAnimationFrame(step);
+                } else {
+                    // ensure cube sits at base position if reduced motion
+                    cube.style.transform = `translate(${baseX}%, ${baseY}%)`;
                 }
+
+                // smooth crossfade when swapping icons
+                const swapIcon = () => {
+                    const nextIndex = (iconIndex + 1) % icons.length;
+                    const old = cube.querySelector('i');
+                    const ni = document.createElement('i');
+                    ni.className = icons[nextIndex];
+                    ni.style.position = 'absolute';
+                    ni.style.left = '50%';
+                    ni.style.top = '50%';
+                    ni.style.transform = 'translate(-50%, -50%)';
+                    ni.style.opacity = '0';
+                    ni.style.transition = 'opacity 480ms ease';
+                    cube.appendChild(ni);
+                    // trigger fade-in
+                    requestAnimationFrame(() => ni.style.opacity = '1');
+                    // remove old after transition
+                    setTimeout(() => {
+                        if (old && old.parentNode) old.parentNode.removeChild(old);
+                    }, 520);
+                    iconIndex = nextIndex;
+                };
+
+                // staggered swap interval
+                const swapInterval = 1800 + Math.floor(Math.random() * 2600) + idx * 220;
+                let swapTimer = null;
+                if (!prefersReduced) swapTimer = setInterval(swapIcon, swapInterval);
+
+                // nicer hover interaction
+                cube.addEventListener('mouseenter', () => {
+                    cube.style.transition = 'box-shadow 260ms ease, transform 260ms ease';
+                    cube.style.boxShadow = '0 18px 46px rgba(212,175,55,0.14)';
+                });
+                cube.addEventListener('mouseleave', () => {
+                    cube.style.boxShadow = '0 6px 18px rgba(212,175,55,0.06)';
+                });
+
+                // cleanup on unload/visibilitychange to save CPU
+                const cleanup = () => {
+                    if (rafId) cancelAnimationFrame(rafId);
+                    if (swapTimer) clearInterval(swapTimer);
+                };
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        cleanup();
+                    } else {
+                        // restart if visible
+                        if (!prefersReduced) {
+                            // restart RAF
+                            let start = performance.now();
+                            const step = (t) => {
+                                const x = baseX + Math.sin(t * freq + phase) * ampX;
+                                const y = baseY + Math.cos(t * freq + phase) * ampY;
+                                const scale = 1 + Math.sin(t * freq * 1.1 + phase) * 0.04;
+                                const rotate = (t * rotSpeed) % 360;
+                                cube.style.transform = `translate(${x}%, ${y}%) scale(${scale}) rotate(${rotate}deg)`;
+                                rafId = requestAnimationFrame(step);
+                            };
+                            rafId = requestAnimationFrame(step);
+                        }
+                        // restart icon swapping
+                        if (!prefersReduced && !swapTimer) swapTimer = setInterval(swapIcon, swapInterval);
+                    }
+                });
             });
-            
-            cube.addEventListener('mouseleave', function() {
-                this.style.transform = 'translate(var(--x), var(--y)) scale(1)';
+        })();
+
+        // Nav logo cube — anchored animated icon that acts as the site's logo
+        (function() {
+            const logos = Array.from(document.querySelectorAll('.logo-cube'));
+            if (!logos.length) return;
+
+            const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            logos.forEach((el) => {
+                const icons = (el.dataset.icons ? el.dataset.icons.split('|') : ['fas fa-user']).filter(Boolean);
+                if (!icons.length) return;
+
+                let iconIndex = Math.floor(Math.random() * icons.length);
+
+                const renderIcon = (i, fade = 350) => {
+                    const next = document.createElement('i');
+                    next.className = icons[i];
+                    // absolute center inside the cube
+                    next.style.position = 'absolute';
+                    next.style.left = '50%';
+                    next.style.top = '50%';
+                    next.style.transform = 'translate(-50%, -50%)';
+                    next.style.opacity = '0';
+                    next.style.transition = `opacity ${fade}ms ease`;
+                    el.appendChild(next);
+
+                    // trigger fade in
+                    requestAnimationFrame(() => { next.style.opacity = '1'; });
+
+                    // remove previous icons after fade completes
+                    setTimeout(() => {
+                        Array.from(el.querySelectorAll('i')).forEach(node => {
+                            if (node !== next) node.remove();
+                        });
+                    }, fade + 40);
+                };
+
+                // initial icon
+                renderIcon(iconIndex, 10);
+
+                // subtle randomize interval for natural feel
+                const baseInterval = 4200 + Math.floor(Math.random() * 2600);
+
+                // rotate animation if user allows motion
+                if (!prefersReduced) {
+                    el.style.animation = 'logo-rotate 6s ease-in-out infinite';
+                }
+
+                const swap = () => {
+                    iconIndex = (iconIndex + 1) % icons.length;
+                    renderIcon(iconIndex, 420);
+                };
+
+                let swapTimer = setInterval(swap, baseInterval);
+
+                // pause animations when page hidden to save CPU
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        el.style.animationPlayState = 'paused';
+                        // intervals will be throttled by the browser when hidden
+                    } else {
+                        el.style.animationPlayState = 'running';
+                    }
+                });
+
+                // small accessibility: announce that this is the logo via aria-label already set on element
             });
-        });
+        })();
 
         // Add glowing effect to project cards on hover
         document.querySelectorAll('.project-card').forEach(card => {
