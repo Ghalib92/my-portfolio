@@ -1481,24 +1481,40 @@
                 </div>
             </div>
             
-            <div class="contact-form-container glass-card">
-                <h3 class="contact-title">Send a Message</h3>
-                <form id="contactForm" class="contact-form">
-                    <div class="form-group">
-                        <input type="text" id="name" placeholder="Your Name" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" id="email" placeholder="Your Email" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="subject" placeholder="Subject" required>
-                    </div>
-                    <div class="form-group">
-                        <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-gold btn-full">Send Message</button>
-                </form>
-            </div>
+           <div class="contact-form-container glass-card">
+    <h3 class="contact-title">Send a Message</h3>
+
+    <form
+        id="contactForm"
+        class="contact-form"
+        action="https://formspree.io/f/mdkqqzzb"
+        method="POST"
+    >
+        <div class="form-group">
+            <input type="text" name="name" placeholder="Your Name" required>
+        </div>
+
+        <div class="form-group">
+            <input type="email" name="email" placeholder="Your Email" required>
+        </div>
+
+        <div class="form-group">
+            <input type="text" name="subject" placeholder="Subject" required>
+        </div>
+
+        <div class="form-group">
+            <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+        </div>
+
+        <!-- Honeypot (spam protection, invisible) -->
+        <input type="text" name="_gotcha" style="display:none">
+
+        <button type="submit" class="btn btn-gold btn-full">
+            Send Message
+        </button>
+    </form>
+</div>
+
         </div>
     </section>
 
@@ -1586,23 +1602,66 @@
             }
         });
 
-        // Form submission
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form values
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
-            
-            // In a real implementation, you would send this data to a server
-            // For this demo, we'll just show an alert
-            alert(`Thank you, ${name}! Your message has been sent. I'll get back to you soon at ${email}.`);
-            
-            // Reset form
-            document.getElementById('contactForm').reset();
-        });
+        // Form submission (sends to Formspree endpoint via AJAX)
+        (function() {
+            const form = document.getElementById('contactForm');
+            if (!form) return;
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                // Use FormData so names in the form are preserved
+                const data = new FormData(form);
+
+                // Honeypot check
+                if (data.get('_gotcha')) {
+                    // silently drop spam
+                    return;
+                }
+
+                // Show a sending state (disable button)
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn ? submitBtn.textContent : null;
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Sending...';
+                }
+
+                try {
+                    const resp = await fetch(form.action, {
+                        method: form.method || 'POST',
+                        body: data,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (resp.ok) {
+                        // Formspree returns 200 on success
+                        alert('Thanks — your message was sent. I will get back to you soon.');
+                        form.reset();
+                    } else {
+                        // Try to parse error message
+                        let errText = 'There was a problem sending your message.';
+                        try {
+                            const json = await resp.json();
+                            if (json && json.error) errText = json.error;
+                        } catch (err) {
+                            // ignore
+                        }
+                        alert(errText);
+                    }
+                } catch (err) {
+                    console.error('Contact form error', err);
+                    alert('Network error: could not send message. Please try again later.');
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
+                }
+            });
+        })();
 
         // Animation on scroll
         const observerOptions = {
