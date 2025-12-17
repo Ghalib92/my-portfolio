@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -349,6 +350,74 @@
             line-height: 1.8;
         }
         
+        .hero-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        @media (min-width: 576px) {
+            .hero-actions {
+                flex-direction: row;
+                gap: 20px;
+            }
+        }
+        
+        .contact-card {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        @media (min-width: 992px) {
+            .contact-card {
+                max-width: 400px;
+                margin-left: auto;
+            }
+        }
+        
+        .card-title {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            margin-bottom: 20px;
+            color: var(--accent-gold);
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .contact-item i {
+            font-size: 1.2rem;
+            width: 30px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .social-link {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: var(--transition-fast);
+        }
+        
+        .social-link:hover {
+            background: var(--accent-gold);
+            color: var(--primary-dark);
+            transform: translateY(
+       
         .hero-actions {
             display: flex;
             flex-direction: column;
