@@ -1059,7 +1059,7 @@
                         <span class="icon-box"><i class="fa-solid fa-brain"></i></span>
                         <h3>AI/RAG Engineering</h3>
                     </div>
-                    <p>OpenAI, LLaMA, DeepSeek, LangChain, embeddings, Pinecone, Chroma, semantic retrieval, prompt engineering, citations, and chatbot workflows.</p>
+                    <p>Production RAG built to be trustworthy, not just impressive: similarity-thresholded retrieval, reranking (bge-reranker-v2-m3), refusal on low confidence, and source-grounded citations. LLaMA-3.1 (Groq), Gemini, OpenAI, DeepSeek, LangChain, Pinecone, ChromaDB, intent routing, and eval/regression suites.</p>
                 </article>
                 <article class="card reveal">
                     <div class="card-title">
@@ -1098,7 +1098,7 @@
                         <h3>Software Engineer & AI Engineer</h3>
                         <h4>Lead Engineer on Sheria AI and contributor to Datawise Africa platform</h4>
                         <ul class="bullets">
-                            <li>Designed and shipped the Sheria AI RAG pipeline for African law, including ingestion, chunking, embeddings, Pinecone vector storage, semantic retrieval, and OpenAI-backed answers with citations.</li>
+                            <li>Built the Sheria AI RAG backend (Django 5.2 / DRF, 32 endpoints) with a two-step triage → answer pipeline and engineered the hallucination controls at its core: dual-corpus ChromaDB retrieval with calibrated cosine-distance cutoffs, relevance-scored citations, and graceful refusal on out-of-scope input — LLaMA-3.1 via Groq + LangChain.</li>
                             <li>Contribute to backend and frontend maintenance, feature enhancements, content management, SEO improvements, and team development for datawiseafrica.com.</li>
                             <li>Build Django/DRF and FastAPI services, React/TypeScript frontends, RAG chatbots, vector workflows, and prompt engineering systems.</li>
                             <li>Set up production servers, GitHub Actions CI/CD, dedicated staging environments, PR reviews, SonarQube quality gates, Slack collaboration, and Jira Agile workflows.</li>
@@ -1195,12 +1195,12 @@
                         </div>
                         <span class="tag">AI Legal</span>
                     </div>
-                    <p>AI-powered legal assistant for African law with document ingestion, chunking, embeddings, Pinecone retrieval, OpenAI answer generation, and citations.</p>
+                    <p>AI legal assistant for Kenyan law with a two-step triage → answer RAG pipeline: dual-corpus retrieval over ChromaDB (case law + the Constitution) with calibrated cosine-distance cutoffs, relevance-scored citations, and a strict "never fabricate a case or section" prompt with graceful refusal on out-of-scope input. LLaMA-3.1 via Groq + LangChain; Sentence-Transformers embeddings.</p>
                     <div class="pill-list">
-                        <span class="pill"><i class="fa-solid fa-brain"></i> OpenAI</span>
+                        <span class="pill"><i class="fa-solid fa-brain"></i> Groq / LLaMA-3.1</span>
                         <span class="pill"><i class="fa-solid fa-link"></i> LangChain</span>
-                        <span class="pill"><i class="fa-solid fa-database"></i> Pinecone</span>
-                        <span class="pill"><i class="fa-solid fa-magnifying-glass"></i> RAG</span>
+                        <span class="pill"><i class="fa-solid fa-database"></i> ChromaDB</span>
+                        <span class="pill"><i class="fa-solid fa-magnifying-glass"></i> Grounded RAG</span>
                     </div>
                     <a class="project-link" href="https://sheria.africa" target="_blank" rel="noopener">Visit project <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
                 </article>
@@ -1227,18 +1227,18 @@
                     <div class="project-top">
                         <div>
                             <i class="fa-solid fa-mosque project-icon"></i>
-                            <h3>Islamify</h3>
+                            <h3>Ummly</h3>
                         </div>
-                        <span class="tag">Platform</span>
+                        <span class="tag">AI Platform</span>
                     </div>
-                    <p>Digital platform for Muslim communities with community Q&A, an AI Islamic assistant (RAG with Qur'anic citations), mosque locator and prayer times, madrassa directory, zakat calculator, and verified sadaqah/charity.</p>
+                    <p>Islamic knowledge platform built solo across backend, web, and mobile. A Pinecone RAG assistant grounded in the Qur'an and Hadith — llama-text-embed-v2 embeddings, bge-reranker-v2-m3 reranking, a confidence floor that returns a low-confidence message instead of guessing, intent classification, query rewriting, bilingual EN/AR answers, and per-excerpt citations. LLaMA-3.1 via Groq with Google Gemini fallback.</p>
                     <div class="pill-list">
-                        <span class="pill"><i class="fa-brands fa-python"></i> Django</span>
-                        <span class="pill"><i class="fa-brands fa-react"></i> React Router</span>
-                        <span class="pill"><i class="fa-solid fa-magnifying-glass"></i> RAG</span>
-                        <span class="pill"><i class="fa-solid fa-database"></i> Supabase</span>
+                        <span class="pill"><i class="fa-brands fa-python"></i> Django/DRF</span>
+                        <span class="pill"><i class="fa-solid fa-database"></i> Pinecone</span>
+                        <span class="pill"><i class="fa-solid fa-magnifying-glass"></i> RAG + Reranking</span>
+                        <span class="pill"><i class="fa-brands fa-react"></i> React Router + Expo</span>
                     </div>
-                    <a class="project-link" href="https://islamify.digitalappex.co.ke" target="_blank" rel="noopener">Visit project <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                    <a class="project-link" href="https://ummly.co.ke" target="_blank" rel="noopener">Visit project <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
                 </article>
 
                 <article class="card project-card reveal">
@@ -1411,13 +1411,16 @@
                 </article>
 
                 <article class="card skill-card reveal">
-                    <div class="card-title"><span class="icon-box"><i class="fa-solid fa-brain"></i></span><h3>AI / LLM</h3></div>
+                    <div class="card-title"><span class="icon-box"><i class="fa-solid fa-brain"></i></span><h3>AI / RAG</h3></div>
                     <div class="pill-list">
-                        <span class="pill"><i class="fa-solid fa-robot"></i> OpenAI API</span>
+                        <span class="pill"><i class="fa-solid fa-robot"></i> LLaMA-3.1 (Groq)</span>
+                        <span class="pill"><i class="fa-solid fa-robot"></i> Gemini</span>
+                        <span class="pill"><i class="fa-solid fa-robot"></i> OpenAI / DeepSeek</span>
                         <span class="pill"><i class="fa-solid fa-link"></i> LangChain</span>
                         <span class="pill"><i class="fa-solid fa-magnifying-glass"></i> RAG Pipelines</span>
+                        <span class="pill"><i class="fa-solid fa-layer-group"></i> Reranking (bge-v2-m3)</span>
                         <span class="pill"><i class="fa-solid fa-vector-square"></i> Embeddings</span>
-                        <span class="pill"><i class="fa-solid fa-comments"></i> AI Chatbots</span>
+                        <span class="pill"><i class="fa-solid fa-shield-halved"></i> Anti-hallucination</span>
                         <span class="pill"><i class="fa-solid fa-lightbulb"></i> Prompt Engineering</span>
                     </div>
                 </article>
